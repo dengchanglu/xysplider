@@ -6,6 +6,10 @@
 from scrapy.item import Item, Field
 
 class XyspliderItem(Item):
-    # define the fields for your item here like:
-    # name = Field()
-    pass
+    url = Field()
+    title = Field()
+    size = Field()
+    referer = Field()
+    newcookies = Field()
+    body = Field()
+
