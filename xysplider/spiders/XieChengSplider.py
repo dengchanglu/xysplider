@@ -4,6 +4,7 @@ from scrapy.http.cookies import CookieJar
 import json
 from scrapy.contrib.spiders import Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+import random
 
 
 # from items import temaSpiderItem
@@ -15,23 +16,27 @@ class XieChengSplider(InitSpider):
     login_page = "https://accounts.ctrip.com/member/login.aspx"
     check_login_page = "http://my.ctrip.com/home/myinfo.aspx"
     textCode = ''
-    count=0;
+    count = 0;
     # rule = (Rule(SgmlLinkExtractor(allow='http://g.ctrip.com/merchant/list/p2', callback='parse_content')))
 
     headers = {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'zh-CN,zh;q=0.8',
-        # 'Cache-Control': 'max-age=0',
         'Connection': 'keep-alive',
-        # 'Content-Length': '1684',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': 'Union=SID=155952&AllianceID=4897&OUID=baidu81|index|||; Session=SmartLinkCode=U155952&SmartLinkKeyWord=&SmartLinkQuary=&SmartLinkHost=&SmartLinkLanguage=zh; _abtest_userid=6565d804-1e6b-4041-9d72-d4029273fa63; ASP.NET_SessionId=51ia41c3z1nxqlheruoc5eyy; NSC_WT_Bddpvout_443=ffffffff0907902f45525d5f4f58455e445a4a423660; traceExt=campaign=CHNbaidu81&adid=index; adscityen=Chengdu; SMBID=; login_type=0; login_uid=D3CDE3F209DDC44AC55D232A5A5BBEBC; ASP.NET_SessionSvc=MTAuOC4xMTUuNDF8OTA5MHxqaW5xaWFvfGRlZmF1bHR8MTQ0OTEzMzMwMjUxNw; __zpspc=9.3.1470295522.1470296925.3%231%7Cbaidu%7Ccpc%7Cbaidu81%7C%25E6%2590%25BA%25E7%25A8%258B%7C%23; _jzqco=%7C%7C%7C%7C1470295522442%7C1.189257473.1470190324492.1470295530829.1470296925952.1470295530829.1470296925952.0.0.0.8.8; _gat=1; LoginStatus=0%7c; _ga=GA1.2.547467122.1470190325; _bfa=1.1470190321636.2qj2l9.1.1470209279975.1470295293440.5.38; _bfs=1.9; _bfi=p1%3D100003%26p2%3D100003%26v1%3D38%26v2%3D37',
         'Host': 'accounts.ctrip.com',
-        # 'Origin': 'https://accounts.ctrip.com',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.63 Safari/537.36',
+        'Cookie': 'p1=100003&p2=100003&v1=1&v2=5'
+    }
+    login_header = {
+        'Host': 'accounts.ctrip.com',
+        'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'zh-CN,zh;q=0.8',
         'Referer': 'https://accounts.ctrip.com/member/login.aspx',
-        # 'Upgrade-Insecure-Requests': '1',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.63 Safari/537.36'
+        'Connection': 'keep-alive',
+        'Cookie': '',
     }
     info_headers = {
         'host': 'g.ctrip.com',
@@ -42,42 +47,49 @@ class XieChengSplider(InitSpider):
         'Cookie': '_bfa=1.1451296591644.117epz.1.1470369053219.1470373730336.4.30; __utma=1.916163753.1451296592.1451296592.1451296592.1; _bfi=p1%3D104505%26p2%3D600000312%26v1%3D27%26v2%3D26; SMBID=; LoginStatus=0%7c; login_type=6; login_uid=D3CDE3F209DDC44AA154C0525E34E31A; __zpspc=9.2.1470373734.1470374886.14%234%7C%7C%7C%7C%7C%23; _jzqco=%7C%7C%7C%7C1470369938027%7C1.1828098633.1470369937751.1470374875957.1470374886986.1470374875957.1470374886986.undefined.0.0.16.16; _abtest_userid=83226e41-eec4-45d6-8ba9-fd63324a363e; adscityen=Chengdu; Customer=HAL=ctrip_cn; _ctm_t=ctrip; StartCity_Pkg=PkgStartCity=28; ASP.NET_SessionSvc=MTAuOC45Mi41fDkwOTB8amlucWlhb3xkZWZhdWx0fDE0NDkxMzQ4MjE3NDI; _ga=GA1.2.916163753.1451296592; selectedItem={"province99999":99999,"tags999":999,"rewardtypes99":99,"tagtype99":99,"contient0":0,"country999":999,"city99999":99999}',
         'Connection': 'keep-alive'
     }
+
     def init_request(self):
-        yield Request(url=self.start_urls[0].format(num=1),headers=self.info_headers, callback=self.init)
-    def init(self,response):
+        # yield Request(url=self.start_urls[0].format(num=1),headers=self.info_headers, callback=self.init)
+        yield Request(url='https://accounts.ctrip.com/member/ajax/AjaxChkBWGAndVerifyCode.ashx?username=15928506093&tmp='+str(random.randint(0,1000)), headers=self.headers, callback=self.login)
+
+    def init(self, response):
         self.count = response.xpath('//div[@class="pagination"]/ul/li/a/text()').extract()[10]
         count = int(self.count)
         while count > 0:
-            yield Request(url=self.start_urls[0].format(num=count),headers=self.info_headers, callback=self.init)
+            yield Request(url=self.start_urls[0].format(num=count), headers=self.info_headers, callback=self.init)
 
             count -= 1
 
     def login(self, response):
+        tmpCookie = response.headers.getlist('Set-Cookie')
+        sessionSvc = tmpCookie[0].split(";")[0]
+        sessionId = tmpCookie[1].split(";")[0]
 
-        # textCodeUrl = response.selector.xpath('//img').extract()
-        self.log(response.body)
-
-        msgCode = raw_input("Please input msgCode!  ")
-        self.log('code is ' + msgCode)
-        return FormRequest(
+        # bddpvout_443 = tmpCookie[2].split(";")[0]
+        cookie = sessionSvc + ';' + sessionId + ';_bfi=p1=100003&p2=100101991&v1=5&v2=4'
+        self.login_header['Cookie']= cookie
+        print cookie
+        print '----------------------------------------------------------------------------'
+        print self.login_header
+        request = FormRequest(
             self.login_page,
-            headers=self.headers,
+            headers=self.login_header,
             formdata={
                 '__EVENTTARGET': '', '__EVENTARGUMENT': '',
-                '__VIEWSTATE': '/wEPDwUKMTA0NDI1NDExNw8WAh4DZGRkMtwEAAEAAAD/////AQAAAAAAAAAEAQAAAOIBU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuRGljdGlvbmFyeWAyW1tTeXN0ZW0uU3RyaW5nLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODldLFtTeXN0ZW0uU3RyaW5nLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODldXQMAAAAHVmVyc2lvbghDb21wYXJlcghIYXNoU2l6ZQADAAiSAVN5c3RlbS5Db2xsZWN0aW9ucy5HZW5lcmljLkdlbmVyaWNFcXVhbGl0eUNvbXBhcmVyYDFbW1N5c3RlbS5TdHJpbmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV1dCAAAAAAJAgAAAAAAAAAEAgAAAJIBU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuR2VuZXJpY0VxdWFsaXR5Q29tcGFyZXJgMVtbU3lzdGVtLlN0cmluZywgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0AAAAACxYCZg9kFgQCAg8WAh4Fc3R5bGUFDmRpc3BsYXk6YmxvY2s7FgICAQ8WBB8BBRN2aXNpYmlsaXR5OnZpc2libGU7Hglpbm5lcmh0bWwFNzxpPjwvaT7nmbvlvZXlpLHotKXvvIzor7fkvb/nlKjlhbbku5bmtY/op4jlmajph43or5XjgIJkAhsPZBYCZg8WAh4HVmlzaWJsZWhkGAEFHl9fQ29udHJvbHNSZXF1aXJlUG9zdEJhY2tLZXlfXxYCBQxjaGtBdXRvTG9naW4FDmNoa0F1dG9Mb2dpbkR5',
+                '__VIEWSTATE': '/wEPDwUKMTA0NDI1NDExNw8WAh4DZGRkMtwEAAEAAAD/////AQAAAAAAAAAEAQAAAOIBU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuRGljdGlvbmFyeWAyW1tTeXN0ZW0uU3RyaW5nLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODldLFtTeXN0ZW0uU3RyaW5nLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODldXQMAAAAHVmVyc2lvbghDb21wYXJlcghIYXNoU2l6ZQADAAiSAVN5c3RlbS5Db2xsZWN0aW9ucy5HZW5lcmljLkdlbmVyaWNFcXVhbGl0eUNvbXBhcmVyYDFbW1N5c3RlbS5TdHJpbmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV1dCAAAAAAJAgAAAAAAAAAEAgAAAJIBU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuR2VuZXJpY0VxdWFsaXR5Q29tcGFyZXJgMVtbU3lzdGVtLlN0cmluZywgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0AAAAACxYCZg9kFgQCAg8WAh4Fc3R5bGUFDWRpc3BsYXk6bm9uZTsWAgIBDxYCHwEFEnZpc2liaWxpdHk6aGlkZGVuO2QCGw9kFgJmDxYCHgdWaXNpYmxlaGQYAQUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgIFDGNoa0F1dG9Mb2dpbgUOY2hrQXV0b0xvZ2luRHk=',
                 'loginType': '0',
-                'hdnToken': 'MjAxNi04LTUgMTE6MDg6MTQ=',
-                'hidGohome': 'MjAxNi04LTUgMTE6MDg6MTQ=',
+                'hdnToken': 'MjAxNi04LTggMTQ6NDA6NTg=',
+                'hidGohome': 'MjAxNi04LTggMTQ6NDA6NTg=',
                 'hidVerifyCodeLevel': 'N',
                 'VerifyCodeFlagDy': 'N',
-                'hidMask': 'F', '1': 'on', 'txtUserName': '18328725827', 'txtPwd': '', 'txtCode': '',
+                'hidMask': 'F', '1': 'on', 'txtUserName': '15928506093', 'txtPwd': '1qaz2wsx3edc', 'txtCode': '',
                 'chkAutoLogin': 'on', 'btnSubmit': "",
-                'mobilePhone': '18328725827',
-                'txtCodePwd': self.textCode,
-                'dyPwd': msgCode,
-                'hidToken': 'MjAxNi04LTUgMTE6MDg6MTQ=',
+                'mobilePhone': '',
+                'txtCodePwd': '',
+                'dyPwd': '',
+                'hidToken': 'MjAxNi04LTggMTQ6NDA6NTg=',
                 'hidServerName': 'https://accounts.ctrip.com',
-                'hidImgCodeDatahash': 'fEVzvht21470367349081',
+                'hidImgCodeDatahash': '',
                 'needCheckServerSession': 'F',
                 'cardname': '',
                 'hid_cardname': '0',
@@ -91,8 +103,9 @@ class XieChengSplider(InitSpider):
                 'txtReHPwd': ''
             },
             callback=self.check_login,
-            meta={'handle_httpstatus_all': [400]},
+            meta={'handle_httpstatus_all': [400], 'dont_merge_cookies': True,},
             dont_filter=True)
+        yield request
 
     def code(self, response):
         return Request(
@@ -112,26 +125,21 @@ class XieChengSplider(InitSpider):
             callback=self.login)
 
     def check_login(self, response):
-        print response.request.headers
         open("loginRes", 'wb').write(response.body)
 
-        # cookieJar = response.meta.setdefault('cookie_jar', CookieJar())
-        # cookieJar.extract_cookies(response, response.request)
+        cookieJar = response.meta.setdefault('cookie_jar', CookieJar())
+        cookieJar.extract_cookies(response, response.request)
 
-        if '{"code":200}' in response.body:
-            self.log("=========Successfully logged in.=========")
-            # request = Request(url=self.check_login_page, meta={'dont_merge_cookies': True, 'cookie_jar': cookieJar},
-            #                   callback=self.parse_directory, dont_filter=True)
-            # cookieJar.add_cookie_header(request)
-            # return request
-        else:
-            self.log("=========An error in login occurred.=========")
+        self.log("=========Successfully logged in.=========")
+        request = Request(url=self.check_login_page, meta={'dont_merge_cookies': True, 'cookie_jar': cookieJar},
+                              callback=self.parse_directory, dont_filter=True)
+        cookieJar.add_cookie_header(request)
+        return request
 
     def parse_directory(self, response):
         self.log("=========Data is flowing.=========")
         self.log(response.url)
         open("loginPage", 'wb').write(response.body)
-
 
     def parse(self, response):
 
@@ -153,28 +161,28 @@ class XieChengSplider(InitSpider):
         # print response.body
         merchantCName = response.xpath('//div[@class="list_R_top_left ellips"]/p/a/text()').extract()
         merchantEName = response.xpath('//div[@class="list_R_top_left ellips"]/p/a/text()').extract()
-        for i,cname in enumerate(merchantCName):
-            if(i%2==0):
-                info = 'merchantCName:' + cname + '------' + 'merchantEName:' + merchantEName[i+1]
+        for i, cname in enumerate(merchantCName):
+            if (i % 2 == 0):
+                info = 'merchantCName:' + cname + '------' + 'merchantEName:' + merchantEName[i + 1]
                 f = open("loginPage", 'a')
                 f.write(info.encode('utf-8'))
                 f.write("\n")
 
 
-        # print tmpCookie
-        # tm = []
-        # for li in tmpCookie:
-        #     tm.append(li)
-        # cookie=''.join(tm)
-        # newUrl = response.xpath("//div[@class='shop_banner']/a/@href").extract()
-        # for url in newUrl:
-        #     # print cookie
-        #     request = Request(
-        #         url=self.start_urls[0] + url,
-        #         # cookies=tmpCookie,
-        #         # headers=response.header,
-        #         callback=self.getInfo)
-        #     yield request
+                # print tmpCookie
+                # tm = []
+                # for li in tmpCookie:
+                #     tm.append(li)
+                # cookie=''.join(tm)
+                # newUrl = response.xpath("//div[@class='shop_banner']/a/@href").extract()
+                # for url in newUrl:
+                #     # print cookie
+                #     request = Request(
+                #         url=self.start_urls[0] + url,
+                #         # cookies=tmpCookie,
+                #         # headers=response.header,
+                #         callback=self.getInfo)
+                #     yield request
 
     def getInfo(self, response):
         merchantCName = response.xpath('//div[@class="merchant_nameL"]/h2/text()').extract()
