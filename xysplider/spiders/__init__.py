@@ -1,56 +1,47 @@
-# This package will contain the spiders of your Scrapy project
-#
-# Please refer to the documentation for information on how to create and manage
-# your spiders.
-#!/usr/bin/python
-#coding=gbk
-#coding=utf-8
-#-*- coding: UTF-8 -*-
-#_author_="dengchanglu"
-# print ("hello world")
-# gao = 10
-# kan = 10
-# print gao * kan
+import requests
+from bs4 import BeautifulSoup
+import time
 
-# x= int(raw_input("Please enter an integer:"))
-# if(x<0):
-#     x= 0
-#     print "change to zero"
-# elif x==0:
-#     print "Zero"
-# elif x==1:
-#     print "One"
-# elif x==2:
-#     print "Two"
-# elif x==3:
-#     print "Three"
+session =requests.Session()
+header = {
+    'user_agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
+}
+class Jd(object):
+    def __init__(self, username, password):
+        super(Jd, self).__init__()
+        self.username = username
+        self.password = password
 
-# words = ["cat", "dog", "pig", "bird"]
-#
-# for w in words[:]:
-#     if (len(w) > 3):
-#         words.insert(2, "test")
-#
-#         for w in words:
-#             print w, len(w)
-# print range(10)
-# print range(5,10)
-# print range(0,10,3)
-#
-# for i in range(len(words)):
-#     print words[i]
-#
-# # def() create function
-# del words[0]
-# print words
-#
-# a= set("2")
-# print a
-#
-# testJson = {"test1":1,"test2":2}
-# print testJson.keys()
-#
-# print "test1" in testJson
-#
-# for i,v in enumerate(words):
-#     print i,v
+    def login(self):
+        soup = BeautifulSoup(session.get('https://passport.jd.com/new/login.aspx', verify=False, headers=header).content)
+        uuid = soup.find(id='uuid')['value']
+        input = soup.find_all(type='hidden')[4]
+        print uuid
+        print input['name']
+        print input['value']
+
+        data = {
+            'uuid': uuid,
+            'loginname': self.username,
+            'nloginpwd': self.password,
+            'loginpwd': self.password,
+            'machineNet': '',
+            'machineCpu': '',
+            'machineDisk': '',
+            'authcode': '',
+            input['name']: input['value']
+        }
+
+        params = {
+            'uuid': uuid,
+            'ReturnUrl': 'http://www.jd.com/?utm_source=jd.com',
+            'r': '0.05012108405860494'
+        }
+
+        res = session.post('https://passport.jd.com/uc/loginService', params=params, data=data, headers=header, verify=False)
+        print res.url
+        print res.content
+
+if __name__ == '__main__':
+    jd = Jd('18328725827', 'dcl.1015701660')
+    jd.login()

@@ -13,7 +13,9 @@ class RandomUserAgent(object):
         return cls(crawler.settings.getlist('USER_AGENTS'))
 
     def process_request(self, request, spider):
-        request.headers.setdefault('User-Agent', random.choice(self.agents))
+        # request.meta['proxy'] = "http://67.229.99.236"
+        pass
+        # request.headers.setdefault('User-Agent', random.choice(self.agents))
 
 
 class ErrorMonkeyMiddleware(object):

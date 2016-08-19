@@ -1,0 +1,38 @@
+
+
+
+
+
+<html>
+<head>
+
+<script>
+
+setTimeout(function(){
+	
+	top.location.href = "https://i.taobao.com/my_taobao.htm?nekot=0ra3x9K2ZGU%3D1470901895656";
+	
+},500);
+
+</script>
+
+
+
+	
+		<script src="https://passport.alibaba.com/mini_apply_st.js?site=0&token=1PFc-lOE-Rfu4ktHj3eZZ5g&callback=callback"></script>
+	
+	
+		<script src="https://passport.alipay.com/mini_apply_st.js?site=0&token=1F2hZQ_-_vFc_zc3wCdHQKQ&callback=callback"></script>
+	
+
+</head>
+<body><script>
+with(document)with(body)with(insertBefore(createElement("script"),firstChild))setAttribute("exparams","category=&userid=&aplus&yunid=&&trid=0a604b2d14709057066875250e&asid=AQAAAABqPaxXRhexQQAAAACssxvjwMGbzw==",id="tb-beacon-aplus",src=(location>"https"?"//g":"//g")+".alicdn.com/alilog/mlog/aplus_v2.js")
+</script>
+
+<input type="hidden" id="x_token" value="">  
+<input type="hidden" id="login_sign" value="">
+<script src="https://g.alicdn.com/kissy/k/1.4.2/seed-min.js"></script> 
+<script src="https://g.alicdn.com/vip/login/0.5.25/js/login/miser-reg.js?t=20160617"></script>
+</body>
+</html>
