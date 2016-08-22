@@ -17,8 +17,8 @@ class JinDongSplider(InitSpider):
     login_page = "https://passport.jd.com/new/login.aspx"
     login_service_url = 'https://passport.jd.com/uc/loginService'
     get_jdu_cookie_url = 'https://mercury.jd.com/log.gif?t=www.100000&m=UA-J2011-1&pin=-&uid=1533948524&sid=1533948524|1&v=je%3D0%24sc%3D24-bit%24sr%3D1920x1080%24ul%3Dzh-cn%24cs%3DGBK%24dt%3D%E4%BA%AC%E4%B8%9C-%E6%AC%A2%E8%BF%8E%E7%99%BB%E5%BD%95%24hn%3Dpassport.jd.com%24fl%3D22.0%20r0%24os%3Dlinux%24br%3Dchrome%24bv%3D51.0.2704.63%24wb%3D1471511238%24xb%3D1471511238%24yb%3D1471511238%24zb%3D1%24cb%3D1%24usc%3Ddirect%24ucp%3D-%24umd%3Dnone%24uct%3D-%24lt%3D0%24ct%3D1471511238034%24tad%3D-%24pinid%3D-&ref=&rm=1471511238049'
-    get_eid_url = 'https://payrisk.jd.com/fcf.html?r={fingerprint:d029e719e1b0ed5875000eb4cea1214f,userAgent:2e4ac77122407d60260f154402db79f1,origin:pc,language:zh-CN,os:linux,osVersion:unknown,browser:Firefox,browserVersion:46.0,colorDepth:24,screenResolution:1080x1920,timezoneOffset:-8,sessionStorage:true,localStorage:true,indexedDb:true,addBehavior:false,openDatabase:false,cpu:unknown,platform:Linux x86_64,track:unspecified,plugins:fe67f9875d393544e63db21b94ef8860,canvas:5655a64c2ead9d3e854d1a8ac5b7f4d3,webglFp:6d2cf1df0e6b4304cb8124aacbec2d2a}&t=IQQ4UHYBHB7SJXT5ZTP2TSO2CYUKGCVZ2DNBMZM6UK7WDHWVITOEN7I2KYKSD5N7QK2N3I3QUXZAM&pin=&oid=&h=s&o=passport.jd.com/new/login.aspx&fc=10E9D7BE0885888ECF2D165E6692351007656ED1F26A60094BF4FA7D4B3A0F50714201F029690DB26CAB5EF7455298AA'
-    check_login_page = "http://www.jd.com"
+    get_authcode_url = 'https://passport.jd.com/uc/showAuthCode'
+    check_login_page = "https://order.jd.com/center/list.action"
     textCode = ''
     count = 0;
     # rule = (Rule(SgmlLinkExtractor(allow='http://g.ctrip.com/merchant/list/p2', callback='parse_content')))
@@ -67,26 +67,22 @@ class JinDongSplider(InitSpider):
     }
 
     login_post_data = {'data':''}
+    authcodesrc = {'src':''}
 
     def init_request(self):
         yield Request(url=self.login_page, headers=self.get_login_page_headers, callback=self.get_fc)
     def get_fc(self,response):
-        open("loginRes", 'wb').write(response.body)
-
         tmpCookie = response.headers.getlist('Set-Cookie')
         qr = tmpCookie[0].split(";")[0]
         alc = tmpCookie[1].split(";")[0]
         _ntj = tmpCookie[2].split(";")[0]
         self.login_header["Cookie"] = qr + ';' + alc + ';' + _ntj + ';' + self.login_header["Cookie"]
         uuid = response.xpath("//input[@id='uuid']/@value").extract()[0]
-
-        eid = response.xpath("//input[@id='eid']/@value").extract()[0]
         eid ='10E9D7BE0885888ECF2D165E6692351007656ED1F26A60094BF4FA7D4B3A0F50714201F029690DB26CAB5EF7455298AA'
-        fp = response.xpath("//input[@name='fp']/@value").extract()[0]
         fp = 'd029e719e1b0ed5875000eb4cea1214f'
         loginType = response.xpath("//input[@id='loginType']/@value").extract()[0]
 
-        loginName = "cjj137783"
+        loginName = "18328725827"
         nloginPwd = "cjj31200707"
         authcode = ""
         machineNet = response.xpath("//input[@id='machineNet']/@value").extract()[0]
@@ -99,7 +95,7 @@ class JinDongSplider(InitSpider):
         arbitrarilyName = response.xpath("//form[@id='formlogin']/input")[8].xpath("//input/@name").extract()[8]
         arbitrarilyValue = response.xpath("//form[@id='formlogin']/input")[8].xpath("//input/@value").extract()[8]
         # "eid":"' + eid + '", "fp":"' +fp + '",,"machineNet":"' + machineNet + '","machineCpu":"' +machineCpu + '","machineDisk":"' + machineDisk+ '"
-        jsonCong = '{"' + arbitrarilyName + '":"' + arbitrarilyValue + '","uuid":"' +uuid + '","_t":"' + _t + '","loginType":"' + loginType + '","loginname":"' +loginName + '","nloginpwd":"' + nloginPwd + '","loginpwd":"'+nloginPwd+'","authcode":"'+authcode+'"}'
+        jsonCong = '{"' + arbitrarilyName + '":"' + arbitrarilyValue + '","uuid":"' +uuid + '","_t":"' + _t + '","loginType":"' + loginType + '","loginname":"' +loginName + '","nloginpwd":"' + nloginPwd + '","loginpwd":"'+nloginPwd+'","authcode":"'+authcode+'","machineNet":"","machineCpu":"","machineDisk":"","eid":"","fp":"'+fp+'"}'
         print "++++++++++++++++++++++++++++++++++++++++++++++++++"
         print (jsonCong)
         print "++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -107,14 +103,26 @@ class JinDongSplider(InitSpider):
         # jtext = json.dumps(jsonCong)
         self.login_post_data['data'] = json.loads(jsonCong)
 
+        self.authcodesrc['src'] = response.xpath("//div[@id='o-authcode']/img/@src2").extract()
+
         # yield Request(url=self.get_eid_url, headers=self.get_login_page_headers, callback=self.init)
         yield Request(url=self.get_jdu_cookie_url, headers=self.jdu_header, callback=self.init)
     def init(self, response):
         tmpCookie = response.headers.getlist('Set-Cookie')
         jdu = tmpCookie[0].split(";")[0]
         self.login_header["Cookie"] = self.login_header["Cookie"] + ';' + jdu
+        acRequired = FormRequest(self.get_authcode_url,headers=self.login_header, formdata={
+            'loginName': self.login_post_data['data']['loginname']},callback=self.get_authcode)  # return ({"verifycode":true})or({"verifycode":false})
+        yield acRequired
+    def get_authcode(self,response):
+        if 'true' in response.body:
+            self.headers['Host'] = 'authcode.jd.com'
+            self.headers['Referer'] = 'https://passport.jd.com/uc/login'
+            response = self.session.get(self.authcodesrc['src'], headers=self.headers)
+            with open('authcode.jpg', 'wb') as f:
+                f.write(response.content)
+                self.login_post_data['data']['authcode'] = input("plz enter authcode:")
         return self.login()
-
     def login(self):
 
         r = "0.40095244084378534"
@@ -134,24 +142,29 @@ class JinDongSplider(InitSpider):
     def check_login(self, response):
         result = json.loads(str(response.body[1:len(response.body)-1]))
         if(result.get('success','')!=''):
-            self.login_header["Cookie"] = self.login_header["Cookie"] + ';alpin=' + \
-                                          (self.login_post_data['data'])['loginname']
+            tmpCookie = response.headers.getlist('Set-Cookie')
+            cookie = ''
+            for tem in tmpCookie:
+                cookie += tem.split(";")[0]+';'
 
 
-
-            # cookieJar = response.meta.setdefault('cookie_jar', CookieJar())
-            # cookieJar.extract_cookies(response, response.request)
+            self.login_header["Cookie"] = cookie+self.login_header["Cookie"]
+            self.login_header["Host"] = 'www.jd.com'
+            print self.login_header["Cookie"]
+            cookieJar = response.meta.setdefault('cookie_jar', CookieJar())
+            cookieJar.extract_cookies(response, response.request)
+            # print cookieJar.extract_cookies
 
             self.log("=========Successfully logged in.=========")
-            request = Request(url=self.check_login_page, meta={'dont_merge_cookies': True,},
-                              cookies=self.login_header['Cookie'],
+            request = Request(url=self.check_login_page, meta={'dont_merge_cookies': True,'cookie_jar': cookieJar},
+                              # headers=response.headers,
                               callback=self.parse_directory, dont_filter=True)
+            cookieJar.add_cookie_header(request)
             return request
         self.log("=========Failing logged in.=========")
         open("loginResF", 'wb').write(response.body)
-        open("loginRes", 'wb').write(response.body)
         _t = result["_t"]
-        # data = json.loads(self.login_post_data["data"])["_t"] = _t
+        data = self.login_post_data["data"]["_t"] = _t
         return self.login()
 
     def parse_directory(self, response):
