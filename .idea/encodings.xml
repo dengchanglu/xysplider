@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/loginPage" charset="GBK" />
     <file url="file://$PROJECT_DIR$/xysplider/loginPage" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/xysplider/loginPage" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/xysplider/loginPage" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/xysplider/loginPage" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/xysplider/loginPage" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/xysplider/loginRes" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/xysplider/loginRes" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/xysplider/loginRes" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/xysplider/loginRes" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/xysplider/spiders/JinDongSplider.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xysplider/spiders/TaoBaoSplider.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xysplider/spiders/__init__.py" charset="US-ASCII" />
   </component>

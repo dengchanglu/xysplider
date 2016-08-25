@@ -7,13 +7,12 @@ import time
 
 # from items import temaSpiderItem
 
-class JinDongSplider(InitSpider):
-    name = "jindongspider"
-    allowed_domains = ["jd.com"]
-    start_urls = ["http://www.jd.com"]
-    login_page = "https://passport.jd.com/new/login.aspx"
-    login_service_url = 'https://passport.jd.com/uc/loginService'
-    get_jdu_cookie_url = 'https://mercury.jd.com/log.gif?t=www.100000&m=UA-J2011-1&pin=-&uid=1533948524&sid=1533948524|1&v=je%3D0%24sc%3D24-bit%24sr%3D1920x1080%24ul%3Dzh-cn%24cs%3DGBK%24dt%3D%E4%BA%AC%E4%B8%9C-%E6%AC%A2%E8%BF%8E%E7%99%BB%E5%BD%95%24hn%3Dpassport.jd.com%24fl%3D22.0%20r0%24os%3Dlinux%24br%3Dchrome%24bv%3D51.0.2704.63%24wb%3D1471511238%24xb%3D1471511238%24yb%3D1471511238%24zb%3D1%24cb%3D1%24usc%3Ddirect%24ucp%3D-%24umd%3Dnone%24uct%3D-%24lt%3D0%24ct%3D1471511238034%24tad%3D-%24pinid%3D-&ref=&rm=1471511238049'
+class PuFaBankSplider(InitSpider):
+    name = "pufabanksplider"
+    allowed_domains = ["spdb.com.cn"]
+    start_urls = ["http://ebank.spdb.com.cn"]
+    login_page = "https://ebank.spdb.com.cn/nbper/prelogin.do"
+    login_service_url = 'https://ebank.spdb.com.cn/nbper/logindispatch.do'
     get_authcode_url = 'https://passport.jd.com/uc/showAuthCode'
     check_login_page = "https://order.jd.com/center/list.action?search=0&d=2&s=4096"
     textCode = ''
@@ -24,32 +23,18 @@ class JinDongSplider(InitSpider):
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'en-US,en;q=0.5',
         'Connection': 'keep-alive',
-        'Host': 'passport.jd.com',
+        'Host': 'ebank.spdb.com.cn',
         'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0'
     }
     login_header = {
-        'Host': 'passport.jd.com',
+        'Host': 'ebank.spdb.com.cn',
         'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0',
-        'Accept': 'text/plain, */*; q=0.01',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'en-US,en;q=0.5',
-        'Referer': 'https://passport.jd.com/new/login.aspx',
+        'Referer': 'https://ebank.spdb.com.cn/nbper/popInnerLogin.do?Reserve=',
         'Connection': 'keep-alive',
-        'Cookie': '__jda=122270672.1791980631.1471578832.1471578832.1471578832.1;__jdb=122270672.1.1791980631|1.1471578832;__jdc=122270672;__jdv=122270672|direct|-|none|-;3AB9D23F7A4B3C9B=10E9D7BE0885888ECF2D165E6692351007656ED1F26A60094BF4FA7D4B3A0F50714201F029690DB26CAB5EF7455298AA;__jrda=1;__jrdb='+str(int(time.time())),
-        'X-Requested-With':'XMLHttpRequest',
-        'Content-Type':'application/x-www-form-urlencoded; charset=utf-8'
-    }
-    jdu_header = {
-        'Host': 'mercury.jd.com',
-        'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0',
-        'Accept': 'image/png,image/*;q=0.8,*/*;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Referer': 'https://passport.jd.com/new/login.aspx',
-        'Connection': 'keep-alive',
-        'Cookie': '__jda=122270672.1791980631.1471578832.1471578832.1471578832.1;__jdb=122270672.1.1791980631|1.1471578832;__jdc=122270672;__jdv=122270672|direct|-|none|-',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        'Content-Type':'application/x-www-form-urlencoded'
     }
 
     login_post_data = {'data':''}
@@ -125,8 +110,8 @@ class JinDongSplider(InitSpider):
         return self.login()
     def authcode(self,response):
         with open('authcode.jpg', 'wb') as f:
-            f.write(response.body)
-            self.login_post_data['data']['authcode'] = raw_input("please enter authcode:")
+            f.write(response.content)
+            self.login_post_data['data']['authcode'] = input("please enter authcode:")
             return self.login()
 
     def login(self):
